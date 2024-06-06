@@ -32,8 +32,13 @@ RUN chown -R 1000:1000 /tmp/user \
     && echo "source /opt/ros/humble/setup.bash" >> /tmp/user/.bashrc
 
 # Configure ROS workspace
-COPY . /tmp/user/object_detection_ws/src/yolo_detector
 WORKDIR /tmp/user/object_detection_ws
+
+
+# COPY . /tmp/user/object_detection_ws/src/yolo_detector
+
+
+
 RUN . /opt/ros/humble/setup.sh && colcon build
 
 # configure startup

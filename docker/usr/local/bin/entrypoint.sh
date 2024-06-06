@@ -25,8 +25,8 @@ for gid in $(id -G); do
 done
 
 # Source the ROS 2 setup script
-source /opt/ros/humble/setup.bash
-source /tmp/user/object_detection_ws/install/setup.bash
+. /opt/ros/humble/setup.sh
+. /tmp/user/object_detection_ws/install/setup.sh
 
 # call command
 exec sudo -HPsu "${USER}" "$@"
