@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: object-detection-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: object-detection
+  template:
+    metadata:
+      labels:
+        app: object-detection
+    spec:
+      containers:
+      - name: object-detection-container
+        image: object-detection:latest
+        ports:
+        - containerPort: 8080  # Update with your container port

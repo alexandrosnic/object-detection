@@ -10,6 +10,8 @@ This project sets up a ROS 2 Humble-based object detection system using YOLOv5 i
 We will work on Ubuntu Jammy (22.04)
 * **Environment** 
 Docker
+* **Deployment** 
+Kubernetes
 * **Middleware**
 ROS2 Humble
 
@@ -32,61 +34,24 @@ $ git clone https://github.com/alexandrosnic/object-detection.git
 $ cd object-detection
 ```
 
-**2. Build image and start docker**
+**2. Start Mnikube**
 ```
-$ chmod +x docker/usr/local/bin/entrypoint.sh
-$ ./start_docker.sh 
-```
-
-**3. Build the workspace**
-Run
-```
-colcon build
-source install/setup.bash
+$ minikube start
 ```
 
-**4. Run the launch file**
+**3. Build the docker image**
 ```
-cd src/iot_sim_launch/launch/
-ros2 launch iot_simulation.launch.py
+docker build -t object-detection .
+```
+
+**4. Apply deployment**
+```
+kubectl apply -f deployment.yaml
 ```
 
 Or run each node independently:
 
-**4.1. Run the rosbag**
+**5. Expose service**
 ```
-ros2 bag play data/r2b_hope.db3 --loop --rate 0.5
-```
-
-**4.2. Visualize the data**
-
-Open another terminal and connect to the docker
-```
-docker exec -it iot-simulation bash
-```
-Open Rviz2
-```
-rviz2 -d camera_vis.rviz
-```
-
-**4.3. Run the logger**
-
-Open another terminal, connect to the docker, and then run the logger
-```
-docker exec -it iot-simulation bash
-ros2 run iot_logger iot_logger
-```
-
-**4.4. Run the uploader**
-
-Open another terminal, connect to the docker, and then run the uploader
-```
-docker exec -it iot-simulation bash
-ros2 run iot_uploader iot_uploader
-```
-
-### Troubleshoot
-1. In case there are issues with docker, make sure shell files have executable permissions:
-```
-chmod +x entrypoint.sh
+kubectl expose deployment object-detection-deployment --type=NodePort --port=8080
 ```
