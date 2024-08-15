@@ -3,7 +3,7 @@ set -e
 
 # Define your desired container name and directory path
 ROS_DISTRO="humble"
-CONTAINER_NAME="object-detection"
+CONTAINER_NAME="jupyter-ros"
 MOUNT_DIR="$PWD"
 HOST_DIR="$PWD"
 

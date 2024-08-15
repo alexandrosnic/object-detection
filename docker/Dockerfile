@@ -8,11 +8,8 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install torch torchvision
-
-# Clone YOLOv5 and install its requirements
-RUN git clone https://github.com/ultralytics/yolov5 /tmp/yolov5 \
-    && pip3 install -r /tmp/yolov5/requirements.txt
+# Run the installation script from pixi.sh
+RUN curl -fsSL https://pixi.sh/install.sh | bash
 
 # system configuration
 RUN chmod o+w /etc \
@@ -31,16 +28,30 @@ RUN chown -R 1000:1000 /tmp/user \
     && echo "export PATH=/tmp/user/.local/bin:$PATH" >> /tmp/user/.bashrc \
     && echo "source /opt/ros/humble/setup.bash" >> /tmp/user/.bashrc
 
+# Initialize a Pixi project
+RUN pixi init jupyter_ros_ws -c robostack-staging -c conda-forge
+
+# Change directory to the Pixi project
+WORKDIR /jupyter_ros_ws
+
+# Add jupyter-ros and ROS2 dependencies
+RUN pixi add jupyter-ros ros-humble-desktop 
+
+# Enable the jupyter-ros server extension
+RUN pixi run jupyter serverextension enable jupyros
+
+# Expose the Jupyter notebook port
+EXPOSE 8888
+
 # Configure ROS workspace
-WORKDIR /tmp/user/object_detection_ws
-
-
-# COPY . /tmp/user/object_detection_ws/src/yolo_detector
-
-
+# WORKDIR /tmp/user/jupyter_ros_ws
 
 RUN . /opt/ros/humble/setup.sh && colcon build
 
 # configure startup
 COPY ./docker/usr/local/bin /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Define the entrypoint and default command
+# ENTRYPOINT ["pixi"]
+CMD ["run", "jupyter", "notebook", "--allow-root", "--ip=0.0.0.0", "--no-browser"]

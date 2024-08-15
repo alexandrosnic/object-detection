@@ -26,7 +26,7 @@ done
 
 # Source the ROS 2 setup script
 . /opt/ros/humble/setup.sh
-. /tmp/user/object_detection_ws/install/setup.sh
+. /tmp/user/jupyter_ros_ws/install/setup.sh
 
 # call command
 exec sudo -HPsu "${USER}" "$@"
